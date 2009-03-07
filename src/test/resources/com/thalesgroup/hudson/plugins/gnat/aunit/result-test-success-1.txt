@@ -1,0 +1,16 @@
+--------------------
+
+   Total Tests Run: 3
+
+   Successful Tests: 3
+      Math class : Test of Math constructor
+      Math class : Test of Math push method
+      Math class : Test of Math sum method
+
+   Failed Assertions: 0
+
+
+   Unexpected Errors: 0
+
+
+Time: 6.285E-5 seconds
