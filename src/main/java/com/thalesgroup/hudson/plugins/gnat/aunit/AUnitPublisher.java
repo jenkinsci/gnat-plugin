@@ -160,20 +160,18 @@ public class AUnitPublisher extends Publisher {
 				try {
 
 					
-					ByteArrayOutputStream bao = new ByteArrayOutputStream();
-					int r = launcher.launch(args.toCommandArray(),build.getEnvVars(), bao,proj.getModuleRoot()).join();
+					ByteArrayOutputStream baos = new ByteArrayOutputStream();
+					int r = launcher.launch(args.toCommandArray(),build.getEnvVars(), baos,proj.getModuleRoot()).join();
 				    if (r != 0){
 				    	return false;
 				    }
-				    listener.getLogger().write(bao.toByteArray());
-				    
-				    String vAUnitExecLog = new String(bao.toByteArray());
+				    listener.getLogger().write(baos.toByteArray());				    
+				    String vAUnitExecLog = baos.toString();
+				    baos.close();
+				    				    
 					AUnitParsing vAUnitParsing=new AUnitParsing();
 					vAUnitParsing.process(junitOutputPath, vAUnitExecLog, normalizedExecutableProjTest);
 					
-					
-				    
-				    
 				} catch (IOException e) {
 					Util.displayIOException(e, listener);
 					e.printStackTrace(listener.fatalError("error"));
@@ -184,7 +182,6 @@ public class AUnitPublisher extends Publisher {
 			
             result  = recordTestResult(JUNIT_REPORTS_PATH + "/TEST-*.xml", build, listener);
             build.getProject().getWorkspace().child(JUNIT_REPORTS_PATH).deleteRecursive();			
-
 		}
 		
 		return result;
