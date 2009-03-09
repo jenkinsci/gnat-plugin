@@ -1,0 +1,22 @@
+--------------------
+
+   Total Tests Run: 5
+
+   Successful Tests: 3
+      Math class : Test of Math constructor
+      Math class : Test of Math push method
+      Math class : Test of Math sum method
+
+   Failed Assertions: 2
+
+      Math class : Test of Math sum_fail1 method
+            Math::sum test failed
+
+      Math class : Test of Math sum_fail2 method
+            Math::sum2 test failed
+
+
+   Unexpected Errors: 0
+
+
+Time: 5.947E-4 seconds

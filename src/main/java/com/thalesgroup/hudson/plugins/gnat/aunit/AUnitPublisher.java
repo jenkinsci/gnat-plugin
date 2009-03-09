@@ -23,24 +23,35 @@
 
 package com.thalesgroup.hudson.plugins.gnat.aunit;
 
+import hudson.FilePath;
 import hudson.Launcher;
 import hudson.Util;
+import hudson.FilePath.FileCallable;
 import hudson.maven.AbstractMavenProject;
+import hudson.maven.agent.AbortException;
 import hudson.model.AbstractBuild;
 import hudson.model.AbstractProject;
+import hudson.model.Action;
 import hudson.model.Build;
 import hudson.model.BuildListener;
 import hudson.model.Descriptor;
 import hudson.model.Project;
 import hudson.model.Result;
+import hudson.remoting.VirtualChannel;
 import hudson.tasks.Publisher;
+import hudson.tasks.junit.TestResult;
+import hudson.tasks.junit.TestResultAction;
+import hudson.tasks.test.TestResultProjectAction;
 import hudson.util.ArgumentListBuilder;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.tools.ant.DirectoryScanner;
+import org.apache.tools.ant.types.FileSet;
 import org.kohsuke.stapler.StaplerRequest;
 
 public class AUnitPublisher extends Publisher {
@@ -98,17 +109,37 @@ public class AUnitPublisher extends Publisher {
 	public boolean prebuild(AbstractBuild<?, ?> build, BuildListener listener) {
 		return true;
 	}
+	 
+	 public static final String JUNIT_REPORTS_PATH = "temporary-junit-reports";
 
+	 
+	 @Override
+	 public Action getProjectAction(hudson.model.Project project) {
+	    TestResultProjectAction action = project.getAction(TestResultProjectAction.class);
+	    if (action == null) {
+	        return new TestResultProjectAction(project);
+	    } else {
+	        return null;
+	     }
+	 }	 
+	 
 	@SuppressWarnings("unchecked")
 	@Override
 	public boolean perform(Build<?, ?> build, Launcher launcher,
 			BuildListener listener) throws InterruptedException, IOException {
 
+		boolean result = true;
+		
 		if (build.getResult().equals(Result.SUCCESS) || (build.getResult().equals(Result.UNSTABLE))) {
 
 			Project proj = build.getProject();
 			
+			
+            FilePath junitOutputPath = new FilePath(proj.getWorkspace(), JUNIT_REPORTS_PATH);
+            junitOutputPath.mkdirs();			
+			
 			for (AUnitEntry entry:executableListTestProj){
+				
 				ArgumentListBuilder args = new ArgumentListBuilder();
 				String normalizedExecutableProjTest = entry.executableTestProj.replaceAll("[\t\r\n]+", " ");
 				normalizedExecutableProjTest = Util.replaceMacro(normalizedExecutableProjTest, build.getEnvVars());
@@ -127,10 +158,22 @@ public class AUnitPublisher extends Publisher {
 				}	
 
 				try {
-					int r = launcher.launch(args.toCommandArray(),build.getEnvVars(), listener.getLogger(),proj.getModuleRoot()).join();
+
+					
+					ByteArrayOutputStream bao = new ByteArrayOutputStream();
+					int r = launcher.launch(args.toCommandArray(),build.getEnvVars(), bao,proj.getModuleRoot()).join();
 				    if (r != 0){
 				    	return false;
 				    }
+				    listener.getLogger().write(bao.toByteArray());
+				    
+				    String vAUnitExecLog = new String(bao.toByteArray());
+					AUnitParsing vAUnitParsing=new AUnitParsing();
+					vAUnitParsing.process(junitOutputPath, vAUnitExecLog, normalizedExecutableProjTest);
+					
+					
+				    
+				    
 				} catch (IOException e) {
 					Util.displayIOException(e, listener);
 					e.printStackTrace(listener.fatalError("error"));
@@ -138,10 +181,107 @@ public class AUnitPublisher extends Publisher {
 					return false;
 				}
 			}
+			
+            result  = recordTestResult(JUNIT_REPORTS_PATH + "/TEST-*.xml", build, listener);
+            build.getProject().getWorkspace().child(JUNIT_REPORTS_PATH).deleteRecursive();			
 
 		}
 		
-		return true;
+		return result;
 	}
+	
+
+    /**
+     * Collect the test results from the files
+     * @param junitFilePattern
+     * @param build
+     * @param existingTestResults existing test results to add results to
+     * @param buildTime
+     * @return a test result
+     * @throws IOException
+     * @throws InterruptedException
+     */
+    private TestResult getTestResult(
+    		final String junitFilePattern, 
+    		AbstractBuild<?, ?> build,
+            final TestResult existingTestResults, 
+            final long buildTime) 
+    throws IOException, InterruptedException {
+    
+    	TestResult result = build.getProject().getWorkspace().act(
+    			
+    			new FileCallable<TestResult>() {
+    					public TestResult invoke(File ws, VirtualChannel channel) throws IOException {
+    						FileSet fs = Util.createFileSet(ws,junitFilePattern);
+    						DirectoryScanner ds = fs.getDirectoryScanner();
+    						String[] files = ds.getIncludedFiles();
+    						if(files.length==0) {
+    							// no test result. Most likely a configuration error or fatal problem
+    							throw new AbortException("No test report files were found. Configuration error?");
+    						}
+    						if (existingTestResults == null) {
+    							return new TestResult(buildTime, ds);
+    						} else {
+    							existingTestResults.parse(buildTime, ds);
+    							return existingTestResults;
+    						}
+    					}
+    			});
+        	return result;
+    	}	
+	
+    /**
+     * Record the test results into the current build.
+     * @param junitFilePattern
+     * @param build
+     * @param listener
+     * @return
+     * @throws InterruptedException
+     * @throws IOException
+     */
+    private boolean recordTestResult(String junitFilePattern, AbstractBuild<?, ?> build, BuildListener listener)
+            throws InterruptedException, IOException {
+    	
+    	
+        TestResultAction existingAction = build.getAction(TestResultAction.class);
+        TestResultAction action;
+
+        try {
+            final long buildTime = build.getTimestamp().getTimeInMillis();
+
+            TestResult existingTestResults = null;
+            if (existingAction != null) {
+                existingTestResults = existingAction.getResult();
+            }
+            TestResult result = getTestResult(junitFilePattern, build, existingTestResults, buildTime);
+
+            if (existingAction == null) {
+                action = new TestResultAction(build, result, listener);
+            } else {
+                action = existingAction;
+                action.setResult(result, listener);
+            }
+            if(result.getPassCount()==0 && result.getFailCount()==0)
+                new AbortException("None of the test reports contained any result");
+        } catch (AbortException e) {
+            if(build.getResult()==Result.FAILURE)
+                // most likely a build failed before it gets to the test phase.
+                // don't report confusing error message.
+                return true;
+
+            listener.getLogger().println(e.getMessage());
+            build.setResult(Result.FAILURE);
+            return true;
+        }
+
+        if (existingAction == null) {
+            build.getActions().add(action);
+        }
+
+        if(action.getResult().getFailCount()>0)
+            build.setResult(Result.UNSTABLE);
+
+        return true;
+    }	
 
 }
