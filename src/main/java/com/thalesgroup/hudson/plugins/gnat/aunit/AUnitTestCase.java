@@ -23,7 +23,10 @@
 
 package com.thalesgroup.hudson.plugins.gnat.aunit;
 
+import java.io.Serializable;
+
 public class AUnitTestCase {
+
 
 	private String classname;
 	

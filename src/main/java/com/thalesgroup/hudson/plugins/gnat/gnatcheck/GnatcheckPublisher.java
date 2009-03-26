@@ -38,6 +38,7 @@ import hudson.util.ArgumentListBuilder;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.Serializable;
 import java.util.List;
 
 import net.sf.json.JSONObject;
@@ -49,8 +50,10 @@ import com.thalesgroup.hudson.plugins.gnat.gnatmake.GnatmakeBuilder;
 import com.thalesgroup.hudson.plugins.gnat.util.GnatException;
 import com.thalesgroup.hudson.plugins.gnat.util.GnatUtil;
 
-public class GnatcheckPublisher extends Publisher {
+public class GnatcheckPublisher extends Publisher implements Serializable{
 
+	private static final long serialVersionUID = 1L;
+	
 	public final static GnatcheckPublisherDescriptor DESCRIPTOR = new GnatcheckPublisherDescriptor();
 
 	public final GnatcheckType[] types;

@@ -47,6 +47,7 @@ import hudson.util.ArgumentListBuilder;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -54,7 +55,10 @@ import org.apache.tools.ant.DirectoryScanner;
 import org.apache.tools.ant.types.FileSet;
 import org.kohsuke.stapler.StaplerRequest;
 
-public class AUnitPublisher extends Publisher {
+public class AUnitPublisher extends Publisher implements Serializable{
+
+
+	private static final long serialVersionUID = 1L;
 
 	public final static Descriptor<Publisher> DESCRIPTOR = new AUnitPublisherDescriptor();
 	

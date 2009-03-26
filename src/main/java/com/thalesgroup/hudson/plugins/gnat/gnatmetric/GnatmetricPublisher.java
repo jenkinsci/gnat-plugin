@@ -38,6 +38,7 @@ import hudson.util.ArgumentListBuilder;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.Serializable;
 import java.util.List;
 
 import net.sf.json.JSONObject;
@@ -48,8 +49,9 @@ import com.thalesgroup.hudson.plugins.gnat.GnatInstallation;
 import com.thalesgroup.hudson.plugins.gnat.util.GnatException;
 import com.thalesgroup.hudson.plugins.gnat.util.GnatUtil;
 
-public class GnatmetricPublisher extends Publisher {
+public class GnatmetricPublisher extends Publisher implements Serializable{
 
+	private static final long serialVersionUID = 1L;
 
 	public final GnatmetricType[] types;
 	

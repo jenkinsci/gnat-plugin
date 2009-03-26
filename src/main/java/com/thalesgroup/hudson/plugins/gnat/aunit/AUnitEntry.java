@@ -23,9 +23,13 @@
 
 package com.thalesgroup.hudson.plugins.gnat.aunit;
 
-public class AUnitEntry {
+import java.io.Serializable;
 
-	
+public class AUnitEntry implements Serializable{
+
+
+	private static final long serialVersionUID = 1L;
+
 	/**
 	 * The relative path to the executable test program
 	 */

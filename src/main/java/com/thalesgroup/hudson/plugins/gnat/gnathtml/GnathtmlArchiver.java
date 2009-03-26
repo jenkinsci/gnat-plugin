@@ -46,6 +46,7 @@ import hudson.util.ArgumentListBuilder;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.Serializable;
 import java.util.regex.Pattern;
 
 import javax.servlet.ServletException;
@@ -66,10 +67,10 @@ import com.thalesgroup.hudson.plugins.gnat.util.GnatUtil;
  * @author Gregory Boissinot
  * @version 1.0 Initial Version
  */
-public class GnathtmlArchiver extends Publisher {
-
+public class GnathtmlArchiver extends Publisher implements Serializable {
 	
-
+	private static final long serialVersionUID = 1L;
+	
     private static final String GNATHTML_DEFAULT_GENERATED_DIRECTORY = "html";
     
     private static final String GNATHTML_GENERATED_DIRECTORY_OTION= "-o";

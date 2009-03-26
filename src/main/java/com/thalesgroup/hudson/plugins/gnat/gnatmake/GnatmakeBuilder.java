@@ -24,7 +24,6 @@
 package com.thalesgroup.hudson.plugins.gnat.gnatmake;
 
 import hudson.CopyOnWrite;
-import hudson.Extension;
 import hudson.Launcher;
 import hudson.Util;
 import hudson.model.Build;
@@ -162,7 +161,6 @@ public class GnatmakeBuilder extends Builder {
 	public static final GnatmakeBuilderDescriptor DESCRIPTOR = new GnatmakeBuilderDescriptor();
 
 	
-	@Extension
 	public static final class GnatmakeBuilderDescriptor extends Descriptor<Builder> {
 
 		@CopyOnWrite
