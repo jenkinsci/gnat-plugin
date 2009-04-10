@@ -23,7 +23,6 @@
 
 package com.thalesgroup.hudson.plugins.gnat.gnatcheck;
 
-import hudson.model.Descriptor.FormException;
 import net.sf.json.JSONObject;
 
 import org.kohsuke.stapler.DataBoundConstructor;

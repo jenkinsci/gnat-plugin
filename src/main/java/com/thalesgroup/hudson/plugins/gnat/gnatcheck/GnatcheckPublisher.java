@@ -25,12 +25,13 @@ package com.thalesgroup.hudson.plugins.gnat.gnatcheck;
 
 import hudson.Launcher;
 import hudson.Util;
-import hudson.maven.AbstractMavenProject;
+import hudson.matrix.MatrixProject;
 import hudson.model.AbstractBuild;
 import hudson.model.AbstractProject;
 import hudson.model.Build;
 import hudson.model.BuildListener;
 import hudson.model.Descriptor;
+import hudson.model.FreeStyleProject;
 import hudson.model.Project;
 import hudson.model.Result;
 import hudson.tasks.Publisher;
@@ -95,8 +96,7 @@ public class GnatcheckPublisher extends Publisher implements Serializable{
 		}
 
 		public boolean isApplicable(Class<? extends AbstractProject> jobType) {
-			// Only for free-style projects
-			return !AbstractMavenProject.class.isAssignableFrom(jobType);
+			return FreeStyleProject.class.isAssignableFrom(jobType) || MatrixProject.class.isAssignableFrom(jobType);
 		}
 
 		public GnatInstallation[] getInstallations() {
