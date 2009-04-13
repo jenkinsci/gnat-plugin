@@ -28,7 +28,7 @@ import hudson.Launcher;
 import hudson.Util;
 import hudson.FilePath.FileCallable;
 import hudson.matrix.MatrixProject;
-import hudson.maven.agent.AbortException;
+import hudson.AbortException;
 import hudson.model.AbstractBuild;
 import hudson.model.AbstractProject;
 import hudson.model.Action;
