@@ -29,17 +29,19 @@ import hudson.Util;
 import hudson.FilePath.FileCallable;
 import hudson.matrix.MatrixProject;
 import hudson.AbortException;
+import hudson.EnvVars;
+import hudson.Extension;
 import hudson.model.AbstractBuild;
 import hudson.model.AbstractProject;
 import hudson.model.Action;
-import hudson.model.Build;
 import hudson.model.BuildListener;
-import hudson.model.Descriptor;
 import hudson.model.FreeStyleProject;
-import hudson.model.Project;
 import hudson.model.Result;
 import hudson.remoting.VirtualChannel;
+import hudson.tasks.BuildStepDescriptor;
+import hudson.tasks.BuildStepMonitor;
 import hudson.tasks.Publisher;
+import hudson.tasks.Recorder;
 import hudson.tasks.junit.TestResult;
 import hudson.tasks.junit.TestResultAction;
 import hudson.tasks.test.TestResultProjectAction;
@@ -52,17 +54,16 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
+import net.sf.json.JSONObject;
 import org.apache.tools.ant.DirectoryScanner;
 import org.apache.tools.ant.types.FileSet;
 import org.kohsuke.stapler.StaplerRequest;
 
-public class AUnitPublisher extends Publisher implements Serializable{
+public class AUnitPublisher extends Recorder implements Serializable {
 
 
 	private static final long serialVersionUID = 1L;
 
-	public final static Descriptor<Publisher> DESCRIPTOR = new AUnitPublisherDescriptor();
-	
     private final List<AUnitEntry>  executableListTestProj   = new ArrayList<AUnitEntry>();	
 	
 
@@ -70,11 +71,8 @@ public class AUnitPublisher extends Publisher implements Serializable{
 		return executableListTestProj;
 	}
 
-	public Descriptor<Publisher> getDescriptor() {
-		return DESCRIPTOR;
-	}
-
-	public static final class AUnitPublisherDescriptor extends Descriptor<Publisher> {
+        @Extension
+	public static final class AUnitPublisherDescriptor extends BuildStepDescriptor<Publisher> {
 
 		public AUnitPublisherDescriptor() {
 			super(AUnitPublisher.class);
@@ -86,13 +84,13 @@ public class AUnitPublisher extends Publisher implements Serializable{
 		}
 		
         @Override
-        public Publisher newInstance(StaplerRequest req) {
+        public Publisher newInstance(StaplerRequest req, JSONObject formData) {
             AUnitPublisher pub = new AUnitPublisher();
             req.bindParameters(pub, "aunit.");
             pub.getExecutableListTestProj().addAll(req.bindParametersToList(AUnitEntry.class, "aunit.entry."));
             return pub;
         }		
-		
+
 
 		@Override
 		public String getHelpFile() {
@@ -118,36 +116,39 @@ public class AUnitPublisher extends Publisher implements Serializable{
 
 	 
 	 @Override
-	 public Action getProjectAction(hudson.model.Project project) {
+	 public Action getProjectAction(AbstractProject<?,?> project) {
 	    TestResultProjectAction action = project.getAction(TestResultProjectAction.class);
 	    if (action == null) {
 	        return new TestResultProjectAction(project);
 	    } else {
 	        return null;
 	     }
-	 }	 
-	 
+	 }
+
+	public BuildStepMonitor getRequiredMonitorService() {
+		return BuildStepMonitor.BUILD;
+	}
+
 	@SuppressWarnings("unchecked")
 	@Override
-	public boolean perform(Build<?, ?> build, Launcher launcher,
+	public boolean perform(AbstractBuild<?, ?> build, Launcher launcher,
 			BuildListener listener) throws InterruptedException, IOException {
 
 		boolean result = true;
 		
 		if (build.getResult().equals(Result.SUCCESS) || (build.getResult().equals(Result.UNSTABLE))) {
 
-			Project proj = build.getProject();
 			
-			
-            FilePath junitOutputPath = new FilePath(proj.getWorkspace(), JUNIT_REPORTS_PATH);
+            FilePath junitOutputPath = new FilePath(build.getWorkspace(), JUNIT_REPORTS_PATH);
             junitOutputPath.mkdirs();			
 			
 			for (AUnitEntry entry:executableListTestProj){
 				
 				ArgumentListBuilder args = new ArgumentListBuilder();
 				String normalizedExecutableProjTest = entry.executableTestProj.replaceAll("[\t\r\n]+", " ");
-				normalizedExecutableProjTest = Util.replaceMacro(normalizedExecutableProjTest, build.getEnvVars());
-				args.add(proj.getModuleRoot() + File.separator+ normalizedExecutableProjTest);
+                                EnvVars env = build.getEnvironment(listener);
+				normalizedExecutableProjTest = Util.replaceMacro(normalizedExecutableProjTest, env);
+				args.add(build.getModuleRoot() + File.separator+ normalizedExecutableProjTest);
 
 				if (!launcher.isUnix()) {
 					// on Windows, executing batch file can't return the correct
@@ -162,10 +163,8 @@ public class AUnitPublisher extends Publisher implements Serializable{
 				}	
 
 				try {
-
-					
 					ByteArrayOutputStream baos = new ByteArrayOutputStream();
-					int r = launcher.launch(args.toCommandArray(),build.getEnvVars(), baos,proj.getModuleRoot()).join();
+					int r = launcher.launch().cmds(args).envs(env).stdout(baos).pwd(build.getModuleRoot()).join();
 				    if (r != 0){
 				    	return false;
 				    }
@@ -185,7 +184,7 @@ public class AUnitPublisher extends Publisher implements Serializable{
 			}
 			
             result  = recordTestResult(JUNIT_REPORTS_PATH + "/TEST-*.xml", build, listener);
-            build.getProject().getWorkspace().child(JUNIT_REPORTS_PATH).deleteRecursive();			
+            build.getWorkspace().child(JUNIT_REPORTS_PATH).deleteRecursive();			
 		}
 		
 		return result;
@@ -209,7 +208,7 @@ public class AUnitPublisher extends Publisher implements Serializable{
             final long buildTime) 
     throws IOException, InterruptedException {
     
-    	TestResult result = build.getProject().getWorkspace().act(
+    	TestResult result = build.getWorkspace().act(
     			
     			new FileCallable<TestResult>() {
     					public TestResult invoke(File ws, VirtualChannel channel) throws IOException {

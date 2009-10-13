@@ -23,18 +23,19 @@
 
 package com.thalesgroup.hudson.plugins.gnat.gnatmetric;
 
+import hudson.Extension;
 import hudson.Launcher;
 import hudson.Util;
 import hudson.matrix.MatrixProject;
 import hudson.model.AbstractBuild;
 import hudson.model.AbstractProject;
-import hudson.model.Build;
 import hudson.model.BuildListener;
 import hudson.model.Descriptor;
 import hudson.model.FreeStyleProject;
-import hudson.model.Project;
 import hudson.model.Result;
+import hudson.tasks.BuildStepMonitor;
 import hudson.tasks.Publisher;
+import hudson.tasks.Recorder;
 import hudson.util.ArgumentListBuilder;
 
 import java.io.File;
@@ -50,23 +51,17 @@ import com.thalesgroup.hudson.plugins.gnat.GnatInstallation;
 import com.thalesgroup.hudson.plugins.gnat.util.GnatException;
 import com.thalesgroup.hudson.plugins.gnat.util.GnatUtil;
 
-public class GnatmetricPublisher extends Publisher implements Serializable{
+public class GnatmetricPublisher extends Recorder implements Serializable{
 
 	private static final long serialVersionUID = 1L;
 
 	public final GnatmetricType[] types;
 	
-	public final static GnatmetricPublisherDescriptor DESCRIPTOR = new GnatmetricPublisherDescriptor();
-	
-	public Descriptor<Publisher> getDescriptor() {
-		return DESCRIPTOR;
-	}		
-	
 	public GnatmetricPublisher(GnatmetricType[] types){
 		this.types= types;
 	}
 	
-	
+	@Extension
 	public static final class GnatmetricPublisherDescriptor extends Descriptor<Publisher>{
 
 
@@ -116,12 +111,10 @@ public class GnatmetricPublisher extends Publisher implements Serializable{
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public boolean perform(Build<?, ?> build, Launcher launcher,
+	public boolean perform(AbstractBuild<?, ?> build, Launcher launcher,
 			BuildListener listener) throws InterruptedException, IOException {
 
 		if (build.getResult().equals(Result.SUCCESS) || (build.getResult().equals(Result.UNSTABLE))) {
-			
-			Project proj = build.getProject();			
 			
 			for (GnatmetricType type:types){
 			
@@ -147,7 +140,7 @@ public class GnatmetricPublisher extends Publisher implements Serializable{
 					args.add("-P");
 					
 					String normalizedProjectFile = projectGnatMetricType.projectFile.replaceAll("[\t\r\n]+", " ");								
-					GnatUtil.addTokenIfExist(proj.getModuleRoot() + File.separator+ normalizedProjectFile,args, true, build);
+					GnatUtil.addTokenIfExist(build.getModuleRoot() + File.separator+ normalizedProjectFile,args, true, build);
 					GnatUtil.addTokenIfExist(projectGnatMetricType.options,args, false, build);
 					
 				}
@@ -185,7 +178,7 @@ public class GnatmetricPublisher extends Publisher implements Serializable{
 				}	
 
 				try {
-					int r = launcher.launch(args.toCommandArray(),build.getEnvVars(), listener.getLogger(),proj.getModuleRoot()).join();
+					int r = launcher.launch().cmds(args).envs(build.getEnvironment(listener)).stdout(listener).pwd(build.getModuleRoot()).join();
 				    if (r != 0){
 						build.setResult(Result.FAILURE);
 						return false;
@@ -203,7 +196,9 @@ public class GnatmetricPublisher extends Publisher implements Serializable{
 		return true;
 	}
 
-
+	public BuildStepMonitor getRequiredMonitorService() {
+		return BuildStepMonitor.BUILD;
+	}
 
 
 }

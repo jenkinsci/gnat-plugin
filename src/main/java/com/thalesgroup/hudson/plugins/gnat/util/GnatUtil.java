@@ -27,9 +27,11 @@ import hudson.Launcher;
 import hudson.Util;
 import hudson.model.AbstractBuild;
 import hudson.model.BuildListener;
+import hudson.model.TaskListener;
 import hudson.util.ArgumentListBuilder;
 
 import java.io.File;
+import java.io.IOException;
 
 import com.thalesgroup.hudson.plugins.gnat.GnatInstallation;
 
@@ -58,12 +60,12 @@ public class GnatUtil {
 	}
 	
     
-	public static void addTokenIfExist(String token, ArgumentListBuilder args, boolean replaceMacro, AbstractBuild<?, ?> build, String... beforeArgs){		
+	public static void addTokenIfExist(String token, ArgumentListBuilder args, boolean replaceMacro, AbstractBuild<?, ?> build, String... beforeArgs) throws IOException, InterruptedException {
 		
 		String normalizedToken = token.replaceAll("[\t\r\n]+", " ");
 		
 		if (replaceMacro)
-			normalizedToken = Util.replaceMacro(normalizedToken, build.getEnvVars());
+			normalizedToken = Util.replaceMacro(normalizedToken, build.getEnvironment(TaskListener.NULL));
 		
 		if (normalizedToken != null && normalizedToken.trim().length() != 0) {
 			for (String arg:beforeArgs){

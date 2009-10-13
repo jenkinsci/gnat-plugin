@@ -28,8 +28,6 @@ import hudson.model.Descriptor;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.kohsuke.stapler.StaplerRequest;
-
 import com.thalesgroup.hudson.plugins.gnat.GnatInstallation;
 import com.thalesgroup.hudson.plugins.gnat.gnatmake.GnatmakeBuilder;
 
@@ -39,14 +37,6 @@ public abstract class GnatmetricTypeDescriptor extends Descriptor<GnatmetricType
         super(clazz);
     }
     
-    /**
-     * Unused.
-     */
-    @Override
-    public final GnatmetricType newInstance(StaplerRequest req) throws FormException {
-        throw new UnsupportedOperationException();
-    }
-
     /**
      * All registered {@link PortTypeDescriptor}s.
      */

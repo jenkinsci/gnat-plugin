@@ -24,7 +24,7 @@
 package com.thalesgroup.hudson.plugins.gnat.gnathtml;
 
 
-
+import hudson.Extension;
 import hudson.FilePath;
 import hudson.Launcher;
 import hudson.Util;
@@ -33,16 +33,16 @@ import hudson.model.AbstractBuild;
 import hudson.model.AbstractItem;
 import hudson.model.AbstractProject;
 import hudson.model.Action;
-import hudson.model.Build;
 import hudson.model.BuildListener;
 import hudson.model.Descriptor;
 import hudson.model.DirectoryBrowserSupport;
 import hudson.model.FreeStyleProject;
-import hudson.model.Project;
 import hudson.model.ProminentProjectAction;
 import hudson.model.Result;
 import hudson.model.Run;
+import hudson.tasks.BuildStepMonitor;
 import hudson.tasks.Publisher;
+import hudson.tasks.Recorder;
 import hudson.util.ArgumentListBuilder;
 
 import java.io.File;
@@ -68,7 +68,7 @@ import com.thalesgroup.hudson.plugins.gnat.util.GnatUtil;
  * @author Gregory Boissinot
  * @version 1.0 Initial Version
  */
-public class GnathtmlArchiver extends Publisher implements Serializable {
+public class GnathtmlArchiver extends Recorder implements Serializable {
 	
 	private static final long serialVersionUID = 1L;
 	
@@ -76,7 +76,7 @@ public class GnathtmlArchiver extends Publisher implements Serializable {
     
     private static final String GNATHTML_GENERATED_DIRECTORY_OTION= "-o";
     	
-	
+    @Extension
     public final static GnathtmlArchiverDescriptor DESCRIPTOR = new GnathtmlArchiverDescriptor();
 	
     private final String gnatName;
@@ -186,10 +186,10 @@ public class GnathtmlArchiver extends Publisher implements Serializable {
         String[] result = p.split(switches);  
         for (int i=0; i<result.length; i++){
             if (GNATHTML_GENERATED_DIRECTORY_OTION.equals(result[i])  && (i+1 <= result.length-1)){
-            	return build.getParent().getModuleRoot().child(result[i+1]);  	
+            	return build.getModuleRoot().child(result[i+1]);  	
             }
     	}
-        return build.getParent().getModuleRoot().child(generatedDir);  	
+        return build.getModuleRoot().child(generatedDir);  	
     	
     }        
     
@@ -209,10 +209,9 @@ public class GnathtmlArchiver extends Publisher implements Serializable {
     
     @SuppressWarnings("unchecked")
     @Override
-    public boolean perform(Build<?,?> build, Launcher launcher,
+    public boolean perform(AbstractBuild<?,?> build, Launcher launcher,
 			BuildListener listener) throws InterruptedException, IOException {
     	
-    	Project proj = build.getProject();	
 		String execPathGnathtml=null;
 		try{
 			execPathGnathtml=GnatUtil.getExecutable(DESCRIPTOR.getInstallations(), gnatName, launcher,listener,GnatInstallation.GNAT_TYPE.GNATHTML);
@@ -242,7 +241,7 @@ public class GnathtmlArchiver extends Publisher implements Serializable {
 		}	
 
 		try {
-			int r = launcher.launch(args.toCommandArray(),build.getEnvVars(), listener.getLogger(),proj.getModuleRoot()).join();
+			int r = launcher.launch().cmds(args).envs(build.getEnvironment(listener)).stdout(listener).pwd(build.getModuleRoot()).join();
 		    if (r != 0){
 				build.setResult(Result.FAILURE);
 				return false;
@@ -290,14 +289,14 @@ public class GnathtmlArchiver extends Publisher implements Serializable {
 	}
 
 
-    public Descriptor<Publisher> getDescriptor() {
-        return DESCRIPTOR;
-    }
-
-    public Action getProjectAction(Project project) {
+    @Override
+    public Action getProjectAction(AbstractProject<?,?> project) {
         return new GnathtmlAction(project);
     }
 
+    public BuildStepMonitor getRequiredMonitorService() {
+        return BuildStepMonitor.BUILD;
+    }
 
 
  
@@ -318,9 +317,8 @@ public class GnathtmlArchiver extends Publisher implements Serializable {
                 return null;
         }
 
-        public void doDynamic(StaplerRequest req, StaplerResponse rsp) throws IOException, ServletException, InterruptedException {
-            new DirectoryBrowserSupport(this, getTitle())
-                .serveFile(req, rsp, new FilePath(dir()), "help.gif", false);
+        public DirectoryBrowserSupport doDynamic(StaplerRequest req, StaplerResponse rsp) throws IOException, ServletException, InterruptedException {
+            return new DirectoryBrowserSupport(this, new FilePath(dir()), getTitle(), "help.gif", false);
         }
 
         protected abstract String getTitle();

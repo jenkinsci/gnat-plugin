@@ -24,25 +24,24 @@
 package com.thalesgroup.hudson.plugins.gnat.gnatmake;
 
 import hudson.CopyOnWrite;
+import hudson.Extension;
 import hudson.Launcher;
 import hudson.Util;
-import hudson.model.Build;
+import hudson.model.AbstractBuild;
 import hudson.model.BuildListener;
 import hudson.model.Descriptor;
-import hudson.model.Project;
 import hudson.model.Result;
 import hudson.tasks.Builder;
 import hudson.util.ArgumentListBuilder;
-import hudson.util.FormFieldValidator;
+import hudson.util.FormValidation;
 
 import java.io.File;
 import java.io.IOException;
 
-import javax.servlet.ServletException;
-
+import net.sf.json.JSONObject;
 import org.kohsuke.stapler.DataBoundConstructor;
+import org.kohsuke.stapler.QueryParameter;
 import org.kohsuke.stapler.StaplerRequest;
-import org.kohsuke.stapler.StaplerResponse;
 
 import com.thalesgroup.hudson.plugins.gnat.GnatInstallation;
 import com.thalesgroup.hudson.plugins.gnat.util.GnatException;
@@ -93,10 +92,8 @@ public class GnatmakeBuilder extends Builder {
 	}
 
 
-	public boolean perform(Build<?, ?> build, Launcher launcher,
+	public boolean perform(AbstractBuild<?, ?> build, Launcher launcher,
 			BuildListener listener) throws InterruptedException {
-		Project proj = build.getProject();
-
 		ArgumentListBuilder args = new ArgumentListBuilder();
 
 		String execPathGnatmake=null;
@@ -144,8 +141,8 @@ public class GnatmakeBuilder extends Builder {
 		}
 
 		try {
-			int r = launcher.launch(args.toCommandArray(), build.getEnvVars(),
-					listener.getLogger(), proj.getModuleRoot()).join();
+			int r = launcher.launch().cmds(args).envs(build.getEnvironment(listener))
+					.stdout(listener).pwd(build.getModuleRoot()).join();
 			return r == 0;
 		} catch (IOException e) {
 			Util.displayIOException(e, listener);
@@ -154,13 +151,10 @@ public class GnatmakeBuilder extends Builder {
 		}
 	}
 
-	public Descriptor<Builder> getDescriptor() {
-		return DESCRIPTOR;
-	}
-
+	@Extension
 	public static final GnatmakeBuilderDescriptor DESCRIPTOR = new GnatmakeBuilderDescriptor();
 
-	
+
 	public static final class GnatmakeBuilderDescriptor extends Descriptor<Builder> {
 
 		@CopyOnWrite
@@ -171,7 +165,7 @@ public class GnatmakeBuilder extends Builder {
 			load();
 		}
 
-
+		@Override
 		public String getHelpFile() {
 			return "/plugin/gnat/gnatmake/help.html";
 		}
@@ -184,7 +178,8 @@ public class GnatmakeBuilder extends Builder {
 			return installations;
 		}
 
-		public boolean configure(StaplerRequest req) {
+		@Override
+		public boolean configure(StaplerRequest req, JSONObject formData) {
 			installations = req.bindParametersToList(GnatInstallation.class,
 					"gnat.").toArray(new GnatInstallation[0]);
 			save();
@@ -194,28 +189,20 @@ public class GnatmakeBuilder extends Builder {
 		/**
 		 * Checks if the specified Hudson GNATMAKE_HOME is valid.
 		 */
-		public void doCheckGnatmakeHome(StaplerRequest req, StaplerResponse rsp)
-				throws IOException, ServletException {
+		public FormValidation doCheckGnatmakeHome(@QueryParameter String value) {
+			File f = new File(Util.fixNull(value));
 
-			new FormFieldValidator(req, rsp, true) {
-				public void check() throws IOException, ServletException {
-					File f = getFileParameter("value");
+			if (!f.isDirectory()) {
+				return FormValidation.error(f + " is not a directory");
+			}
 
-					if (!f.isDirectory()) {
-						error(f + " is not a directory");
-						return;
-					}
+			if (!new File(f, "bin").exists()
+					&& !new File(f, "lib").exists()) {
+				return FormValidation.error(f
+						+ " doesn't look like a GNAT installation directory");
+			}
 
-					if (!new File(f, "bin").exists()
-							&& !new File(f, "lib").exists()) {
-						error(f
-								+ " doesn't look like a GNAT installation directory");
-						return;
-					}
-
-					ok();
-				}
-			}.process();
+			return FormValidation.ok();
 		}
 	}
 

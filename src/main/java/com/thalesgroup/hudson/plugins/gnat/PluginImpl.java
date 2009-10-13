@@ -45,24 +45,10 @@ import com.thalesgroup.hudson.plugins.gnat.gnatmetric.ProjectGnatmetricType;
  */
 public class PluginImpl extends Plugin {
     public void start() throws Exception {
-    	
-    	
-        BuildStep.BUILDERS.add(GnatmakeBuilder.DESCRIPTOR);             
-        BuildStep.PUBLISHERS.add(AUnitPublisher.DESCRIPTOR);
-   
-        
-        BuildStep.PUBLISHERS.add(GnatcheckPublisher.DESCRIPTOR);
         GnatcheckTypeDescriptor.LIST.add(FreeStyleGnatcheckType.DescriptorImpl.INSTANCE);
         GnatcheckTypeDescriptor.LIST.add(ProjectGnatcheckType.DescriptorImpl.INSTANCE);        
 
-     
-        BuildStep.PUBLISHERS.add(GnatmetricPublisher.DESCRIPTOR);        
         GnatmetricTypeDescriptor.LIST.add(FreeStyleGnatmetricType.DescriptorImpl.INSTANCE);
         GnatmetricTypeDescriptor.LIST.add(ProjectGnatmetricType.DescriptorImpl.INSTANCE);
-        
-      
-        BuildStep.PUBLISHERS.add(GnathtmlArchiver.DESCRIPTOR);
-       
-        
     }
 }

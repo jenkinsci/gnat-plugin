@@ -23,18 +23,20 @@
 
 package com.thalesgroup.hudson.plugins.gnat.gnatcheck;
 
+import hudson.Extension;
 import hudson.Launcher;
 import hudson.Util;
 import hudson.matrix.MatrixProject;
 import hudson.model.AbstractBuild;
 import hudson.model.AbstractProject;
-import hudson.model.Build;
 import hudson.model.BuildListener;
 import hudson.model.Descriptor;
 import hudson.model.FreeStyleProject;
-import hudson.model.Project;
 import hudson.model.Result;
+import hudson.tasks.BuildStepDescriptor;
+import hudson.tasks.BuildStepMonitor;
 import hudson.tasks.Publisher;
+import hudson.tasks.Recorder;
 import hudson.util.ArgumentListBuilder;
 
 import java.io.File;
@@ -51,25 +53,20 @@ import com.thalesgroup.hudson.plugins.gnat.gnatmake.GnatmakeBuilder;
 import com.thalesgroup.hudson.plugins.gnat.util.GnatException;
 import com.thalesgroup.hudson.plugins.gnat.util.GnatUtil;
 
-public class GnatcheckPublisher extends Publisher implements Serializable{
+public class GnatcheckPublisher extends Recorder implements Serializable{
 
 	private static final long serialVersionUID = 1L;
 	
-	public final static GnatcheckPublisherDescriptor DESCRIPTOR = new GnatcheckPublisherDescriptor();
-
 	public final GnatcheckType[] types;
 		
 	
 	public GnatcheckPublisher(GnatcheckType[] types){
 		this.types= types;
-	}	
-	
-	public Descriptor<Publisher> getDescriptor() {
-		return DESCRIPTOR;
 	}
 
+	@Extension
 	public static final class GnatcheckPublisherDescriptor extends
-			Descriptor<Publisher> {
+			BuildStepDescriptor<Publisher> {
 
 
 		public GnatcheckPublisherDescriptor() {
@@ -121,14 +118,12 @@ public class GnatcheckPublisher extends Publisher implements Serializable{
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public boolean perform(Build<?, ?> build, Launcher launcher,
+	public boolean perform(AbstractBuild<?, ?> build, Launcher launcher,
 			BuildListener listener) throws InterruptedException, IOException {
 
 		if (build.getResult().equals(Result.SUCCESS)
 				|| (build.getResult().equals(Result.UNSTABLE))) {
 
-			Project proj = build.getProject();
-			
 			for (GnatcheckType type:types){
 				
 				ArgumentListBuilder args = new ArgumentListBuilder();
@@ -153,7 +148,7 @@ public class GnatcheckPublisher extends Publisher implements Serializable{
 					args.add("-P");
 					
 					String normalizedProjectFile = projectGnatcheckType.projectFile.replaceAll("[\t\r\n]+", " ");								
-					GnatUtil.addTokenIfExist(proj.getModuleRoot() + File.separator+ normalizedProjectFile,args, true, build);
+					GnatUtil.addTokenIfExist(build.getModuleRoot() + File.separator+ normalizedProjectFile,args, true, build);
 					GnatUtil.addTokenIfExist(projectGnatcheckType.options,args, false, build);
 					GnatUtil.addTokenIfExist(projectGnatcheckType.rule_options,args, false, build,"-rules");
 				}
@@ -180,9 +175,9 @@ public class GnatcheckPublisher extends Publisher implements Serializable{
 			
 
 				try {
-					int r = launcher.launch(args.toCommandArray(),
-							build.getEnvVars(), listener.getLogger(),
-							proj.getModuleRoot()).join();
+					int r = launcher.launch().cmds(args)
+							.envs(build.getEnvironment(listener)).stdout(listener)
+							.pwd(build.getModuleRoot()).join();
 					if (r != 0) {
 						build.setResult(Result.FAILURE);
 						return false;
@@ -197,6 +192,10 @@ public class GnatcheckPublisher extends Publisher implements Serializable{
 		}
 
 		return true;
+	}
+
+	public BuildStepMonitor getRequiredMonitorService() {
+		return BuildStepMonitor.BUILD;
 	}
 
 }
