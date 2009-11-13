@@ -23,17 +23,11 @@
 package com.thalesgroup.hudson.plugins.gnat;
 
 import hudson.Plugin;
-import hudson.tasks.BuildStep;
 
-import com.thalesgroup.hudson.plugins.gnat.aunit.AUnitPublisher;
 import com.thalesgroup.hudson.plugins.gnat.gnatcheck.FreeStyleGnatcheckType;
-import com.thalesgroup.hudson.plugins.gnat.gnatcheck.GnatcheckPublisher;
 import com.thalesgroup.hudson.plugins.gnat.gnatcheck.GnatcheckTypeDescriptor;
 import com.thalesgroup.hudson.plugins.gnat.gnatcheck.ProjectGnatcheckType;
-import com.thalesgroup.hudson.plugins.gnat.gnathtml.GnathtmlArchiver;
-import com.thalesgroup.hudson.plugins.gnat.gnatmake.GnatmakeBuilder;
 import com.thalesgroup.hudson.plugins.gnat.gnatmetric.FreeStyleGnatmetricType;
-import com.thalesgroup.hudson.plugins.gnat.gnatmetric.GnatmetricPublisher;
 import com.thalesgroup.hudson.plugins.gnat.gnatmetric.GnatmetricTypeDescriptor;
 import com.thalesgroup.hudson.plugins.gnat.gnatmetric.ProjectGnatmetricType;
 

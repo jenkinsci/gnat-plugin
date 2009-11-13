@@ -38,9 +38,9 @@ public abstract class GnatmetricTypeDescriptor extends Descriptor<GnatmetricType
     }
     
     /**
-     * All registered {@link PortTypeDescriptor}s.
+     * All registered {@link GnatmetricTypeDescriptor}s.
      */
-    public static final List<GnatmetricTypeDescriptor> LIST = new ArrayList<GnatmetricTypeDescriptor>();    
+    public static final List<GnatmetricTypeDescriptor> LIST = new ArrayList<GnatmetricTypeDescriptor>();
 
 	public GnatInstallation[] getInstallations() {
 		return GnatmakeBuilder.DESCRIPTOR.getInstallations();					
