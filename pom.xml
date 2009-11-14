@@ -34,7 +34,7 @@
       <dependency>
          <groupId>org.jvnet.hudson.plugins</groupId>
          <artifactId>xunit</artifactId>
-         <version>0.4-SNAPSHOT</version>
+         <version>0.4</version>
       </dependency>
 
       <dependency>
@@ -50,12 +50,10 @@
          <version>1.1</version>
          <scope>test</scope>
       </dependency>
-
    </dependencies>
 
-<build>
-<plugins>
-
+   <build>
+      <plugins>
          <plugin>
             <artifactId>maven-surefire-plugin</artifactId>
             <configuration>
@@ -64,8 +62,6 @@
                </excludes>
             </configuration>
          </plugin>
-
-</plugins>
-
-</build>
+      </plugins>
+   </build>
 </project>

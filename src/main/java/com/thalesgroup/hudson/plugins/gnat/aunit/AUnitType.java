@@ -23,11 +23,11 @@
 
 package com.thalesgroup.hudson.plugins.gnat.aunit;
 
+import com.thalesgroup.hudson.plugins.xunit.types.XUnitType;
+import com.thalesgroup.hudson.plugins.xunit.types.XUnitTypeDescriptor;
 import hudson.Extension;
 import net.sf.json.JSONObject;
 import org.kohsuke.stapler.StaplerRequest;
-import com.thalesgroup.hudson.plugins.xunit.types.XUnitType;
-import com.thalesgroup.hudson.plugins.xunit.types.XUnitTypeDescriptor;
 
 
 public class AUnitType extends XUnitType {
