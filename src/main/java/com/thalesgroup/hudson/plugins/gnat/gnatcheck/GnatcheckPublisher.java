@@ -169,7 +169,9 @@ public class GnatcheckPublisher extends Recorder implements Serializable {
                     int r = launcher.launch().cmds(args)
                             .envs(build.getEnvironment(listener)).stdout(listener)
                             .pwd(build.getModuleRoot()).join();
-                    if (r != 0) {
+                    //On Windows, gnatchek returns an exit code different of zero, even if there is no errors.
+                    //Ignoring Windows return code.
+                    if (r != 0 && launcher.isUnix()) {
                         build.setResult(Result.FAILURE);
                         return false;
                     }
