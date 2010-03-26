@@ -26,14 +26,14 @@ package com.thalesgroup.hudson.plugins.gnat.aunit;
 import com.thalesgroup.hudson.plugins.xunit.types.XUnitType;
 import com.thalesgroup.hudson.plugins.xunit.types.XUnitTypeDescriptor;
 import hudson.Extension;
-import net.sf.json.JSONObject;
-import org.kohsuke.stapler.StaplerRequest;
+import org.kohsuke.stapler.DataBoundConstructor;
 
 
 public class AUnitType extends XUnitType {
 
-    public AUnitType(String pattern) {
-        super(pattern);
+    @DataBoundConstructor
+    public AUnitType(String pattern, boolean faildedIfNotNew, boolean deleteJUnitFiles) {
+        super(pattern, faildedIfNotNew, deleteJUnitFiles);
     }
 
     public String getXsl() {
@@ -51,13 +51,14 @@ public class AUnitType extends XUnitType {
             super(AUnitType.class);
         }
 
-        public AUnitType newInstance(StaplerRequest req, JSONObject formData) throws FormException {
-            return new AUnitType(formData.getString("pattern"));
-        }
-
         @Override
         public String getDisplayName() {
             return Messages.xUnit_aunitType_label();
+        }
+
+        @Override
+        public String getId() {
+            return "aunit";
         }
 
     }
