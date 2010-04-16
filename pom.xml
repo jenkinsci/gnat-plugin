@@ -9,7 +9,7 @@
    </parent>
 
    <artifactId>gnat</artifactId>
-   <version>0.2.3-SNAPSHOT</version>
+   <version>0.3-SNAPSHOT</version>
    <packaging>hpi</packaging>
    <name>Hudson GNAT plugin</name>
    <url>http://wiki.hudson-ci.org/display/HUDSON/Gnat+Plugin</url>
