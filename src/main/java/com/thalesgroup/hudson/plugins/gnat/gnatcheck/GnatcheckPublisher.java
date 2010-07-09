@@ -57,6 +57,7 @@ public class GnatcheckPublisher extends Recorder implements Serializable {
     }
 
     @Extension
+    @SuppressWarnings("unused")
     public static final class GnatcheckPublisherDescriptor extends
             BuildStepDescriptor<Publisher> {
 
@@ -124,7 +125,7 @@ public class GnatcheckPublisher extends Recorder implements Serializable {
 
                     ProjectGnatcheckType projectGnatcheckType = (ProjectGnatcheckType) type;
 
-                    String execPathGnat = null;
+                    String execPathGnat;
                     try {
                         execPathGnat = GnatUtil.getExecutable(projectGnatcheckType.getDescriptor().getInstallations(), type.gnatName, launcher, listener, GnatInstallation.GNAT_TYPE.GNAT);
                     }
@@ -147,7 +148,7 @@ public class GnatcheckPublisher extends Recorder implements Serializable {
 
                     FreeStyleGnatcheckType freeStyleGnatcheckType = (FreeStyleGnatcheckType) type;
 
-                    String execPathGnatcheck = null;
+                    String execPathGnatcheck;
                     try {
                         execPathGnatcheck = GnatUtil.getExecutable(freeStyleGnatcheckType.getDescriptor().getInstallations(), type.gnatName, launcher, listener, GnatInstallation.GNAT_TYPE.GNATCHECK);
                     }

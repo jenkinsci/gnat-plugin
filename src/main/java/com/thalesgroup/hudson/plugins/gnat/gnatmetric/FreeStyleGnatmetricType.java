@@ -26,9 +26,9 @@ package com.thalesgroup.hudson.plugins.gnat.gnatmetric;
 import net.sf.json.JSONObject;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.StaplerRequest;
+import hudson.Extension;
 
 public class FreeStyleGnatmetricType extends GnatmetricType {
-
 
     public final String switches;
 
@@ -38,7 +38,7 @@ public class FreeStyleGnatmetricType extends GnatmetricType {
 
 
     public DescriptorImpl getDescriptor() {
-        return DescriptorImpl.INSTANCE;
+        return new  FreeStyleGnatmetricType.DescriptorImpl();
     }
 
     @DataBoundConstructor
@@ -52,9 +52,9 @@ public class FreeStyleGnatmetricType extends GnatmetricType {
         this.gcc_switches = gcc_switches;
     }
 
-
-    public static final class DescriptorImpl extends GnatmetricTypeDescriptor {
-        private DescriptorImpl() {
+    @Extension
+    public static class DescriptorImpl extends GnatmetricTypeDescriptor {
+        public DescriptorImpl() {
             super(FreeStyleGnatmetricType.class);
         }
 
@@ -69,9 +69,6 @@ public class FreeStyleGnatmetricType extends GnatmetricType {
         public String getHelpFile() {
             return "/plugin/gnat/gnatmetric/generalCommand.html";
         }
-
-        public static final DescriptorImpl INSTANCE = new DescriptorImpl();
     }
 
-    private static final long serialVersionUID = 1L;
 }

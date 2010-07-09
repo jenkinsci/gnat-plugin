@@ -1,6 +1,6 @@
 /*******************************************************************************
- * Copyright (c) 2009 Thales Corporate Services SAS                             *
- * Author : Gregory Boissinot                                                   *
+ * Copyright (c) 2010 Thales Corporate Services SAS                             *
+ * Author : Gregory Boissinot, Guillaume Tanier                                 *
  *                                                                              *
  * Permission is hereby granted, free of charge, to any person obtaining a copy *
  * of this software and associated documentation files (the "Software"), to deal*
@@ -20,28 +20,35 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN    *
  * THE SOFTWARE.                                                                *
  *******************************************************************************/
-package com.thalesgroup.hudson.plugins.gnat;
 
-import com.thalesgroup.hudson.plugins.gnat.gnatcheck.FreeStyleGnatcheckType;
-import com.thalesgroup.hudson.plugins.gnat.gnatcheck.GnatcheckTypeDescriptor;
-import com.thalesgroup.hudson.plugins.gnat.gnatcheck.ProjectGnatcheckType;
-import com.thalesgroup.hudson.plugins.gnat.gnatmetric.FreeStyleGnatmetricType;
-import com.thalesgroup.hudson.plugins.gnat.gnatmetric.GnatmetricTypeDescriptor;
-import com.thalesgroup.hudson.plugins.gnat.gnatmetric.ProjectGnatmetricType;
-import hudson.Plugin;
+package com.thalesgroup.hudson.plugins.gnat.aunit;
 
-/**
- * Gnatmake plugin entry point.
- *
- * @author Gregory Boissinot - Thales Corporate Services SAS
- * @plugin
- */
-public class PluginImpl extends Plugin {
-    public void start() throws Exception {
-        GnatcheckTypeDescriptor.LIST.add(FreeStyleGnatcheckType.DescriptorImpl.INSTANCE);
-        GnatcheckTypeDescriptor.LIST.add(ProjectGnatcheckType.DescriptorImpl.INSTANCE);
+import java.io.*;
 
-        GnatmetricTypeDescriptor.LIST.add(FreeStyleGnatmetricType.DescriptorImpl.INSTANCE);
-        GnatmetricTypeDescriptor.LIST.add(ProjectGnatmetricType.DescriptorImpl.INSTANCE);
+
+public class XSLUtil {
+
+    public static String readXmlAsString(File input)
+            throws IOException {
+        String xmlString = "";
+
+        if (input == null) {
+            throw new IOException("The input stream object is null.");
+        }
+
+        FileInputStream fileInputStream = new FileInputStream(input);
+        InputStreamReader inputStreamReader = new InputStreamReader(fileInputStream);
+        BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
+        String line = bufferedReader.readLine();
+        while (line != null) {
+            xmlString += line + "\n";
+            line = bufferedReader.readLine();
+        }
+        fileInputStream.close();
+        fileInputStream.close();
+        bufferedReader.close();
+
+        return xmlString;
     }
+
 }

@@ -27,12 +27,8 @@ import org.junit.Test;
 
 public class AUnitTestXSLTest extends AbstractXUnitXSLTest {
 
-    public AUnitTestXSLTest() {
-        super(AUnitType.class);
-    }
-
     @Test
     public void testcase1() throws Exception {
-        processTransformation("testcase1/testresult.xml", "testcase1/junit-result.xml");
+        convertAndValidate(AUnitInputMetric.class, "testcase1/testresult.xml", "testcase1/junit-result.xml");
     }
 }

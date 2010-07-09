@@ -39,7 +39,7 @@ public class GnatUtil {
 
     public static String getExecutable(GnatInstallation[] installations, String selectGnatLogicalName, Launcher launcher, BuildListener listener, GnatInstallation.GNAT_TYPE gnatType) throws GnatException {
 
-        String execPath = null;
+        String execPath;
 
         GnatInstallation ai = getGnatlogicalName(installations, selectGnatLogicalName);
 
@@ -77,6 +77,9 @@ public class GnatUtil {
 
     /**
      * Gets the Gnat to invoke, or null to invoke the default one.
+     * @param  installations the arrays of Installation object
+     * @param selectGnatLogicalName the current gnat name
+     * @return the current GnatInstallation object
      */
     private static GnatInstallation getGnatlogicalName(GnatInstallation[] installations, String selectGnatLogicalName) {
         for (GnatInstallation i : installations) {

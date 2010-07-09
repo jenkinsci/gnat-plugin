@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009 Thales Corporate Services SAS                             *
+ * Copyright (c) 2010 Thales Corporate Services SAS                             *
  * Author : Gregory Boissinot                                                   *
  *                                                                              *
  * Permission is hereby granted, free of charge, to any person obtaining a copy *
@@ -23,24 +23,42 @@
 
 package com.thalesgroup.hudson.plugins.gnat.aunit;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
+import com.thalesgroup.dtkit.junit.model.JUnitModel;
+import com.thalesgroup.dtkit.metrics.api.InputMetricXSL;
+import com.thalesgroup.dtkit.metrics.api.InputType;
+import com.thalesgroup.dtkit.metrics.api.OutputMetric;
 
-public class XUnitXSLUtil {
 
-    public static String readXmlAsString(String resourceName)
-            throws IOException {
-        String xmlString = "";
+public class AUnitInputMetric extends InputMetricXSL {
 
-        BufferedReader reader = new BufferedReader(new InputStreamReader(XUnitXSLUtil.class.getResourceAsStream(resourceName)));
-        String line = reader.readLine();
-        while (line != null) {
-            xmlString += line + "\n";
-            line = reader.readLine();
-        }
-        reader.close();
-
-        return xmlString;
+    @Override
+    public InputType getToolType() {
+        return InputType.TEST;
     }
+
+    @Override
+    public String getToolVersion() {
+        return "AUnit 3.x";
+    }
+
+    @Override
+    public String getToolName() {
+        return "AUnit";
+    }
+
+    @Override
+    public String getXslName() {
+        return "aunit-1.0-to-junit-1.0.xsl";
+    }
+
+    @Override
+    public String getInputXsd() {
+        return "aunit-1.0.xsd";
+    }
+
+    public OutputMetric getOutputFormatType() {
+        return JUnitModel.OUTPUT_JUNIT_1_0;
+    }
+
+
 }

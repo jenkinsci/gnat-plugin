@@ -23,43 +23,29 @@
 
 package com.thalesgroup.hudson.plugins.gnat.aunit;
 
+import com.thalesgroup.dtkit.metrics.hudson.api.descriptor.TestTypeDescriptor;
 import com.thalesgroup.hudson.plugins.xunit.types.XUnitType;
-import com.thalesgroup.hudson.plugins.xunit.types.XUnitTypeDescriptor;
-import hudson.Extension;
-import org.kohsuke.stapler.DataBoundConstructor;
 
 
+@SuppressWarnings("unused")
 public class AUnitType extends XUnitType {
 
-    @DataBoundConstructor
     public AUnitType(String pattern, boolean faildedIfNotNew, boolean deleteJUnitFiles) {
         super(pattern, faildedIfNotNew, deleteJUnitFiles);
     }
 
-    public String getXsl() {
-        return "aunit-to-junit.xsl";
+    public TestTypeDescriptor getDescriptor() {
+        return null;
     }
 
-    public XUnitTypeDescriptor<?> getDescriptor() {
-        return new AUnitType.DescriptorImpl();
+    /**
+     * Call at Hudson startup for backward compatibility
+     *
+     * @return an new hudson object
+     */
+    @SuppressWarnings("unused")
+    public Object readResolve() {
+        return new AUnitPluginType(this.getPattern(), this.isFaildedIfNotNew(), this.isDeleteJUnitFiles());
     }
 
-    @Extension
-    public static class DescriptorImpl extends XUnitTypeDescriptor<AUnitType> {
-
-        public DescriptorImpl() {
-            super(AUnitType.class);
-        }
-
-        @Override
-        public String getDisplayName() {
-            return Messages.xUnit_aunitType_label();
-        }
-
-        @Override
-        public String getId() {
-            return "aunit";
-        }
-
-    }
 }

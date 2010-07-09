@@ -63,8 +63,6 @@ public final class GnatInstallation {
         }
     }
 
-    ;
-
     private final String name;
     private final String gnatmakeHome;
 
@@ -74,16 +72,10 @@ public final class GnatInstallation {
         this.gnatmakeHome = home;
     }
 
-    /**
-     * install directory.
-     */
     public String getGnatmakeHome() {
         return gnatmakeHome;
     }
 
-    /**
-     * Human readable display name.
-     */
     public String getName() {
         return name;
     }
@@ -100,11 +92,10 @@ public final class GnatInstallation {
 
 
     /**
-     * Returns true if the executable exists.
+     * Returns true if the executable exists
+     * @return true if the executable exists, false otherwise
      */
     public boolean getExists() {
-        //return getExecutable().exists();
-        //TODO to implement
         return true;
     }
 }

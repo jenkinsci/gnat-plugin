@@ -26,9 +26,9 @@ package com.thalesgroup.hudson.plugins.gnat.gnatcheck;
 import net.sf.json.JSONObject;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.StaplerRequest;
+import hudson.Extension;
 
 public class ProjectGnatcheckType extends GnatcheckType {
-
 
     public final String projectFile;
 
@@ -36,7 +36,7 @@ public class ProjectGnatcheckType extends GnatcheckType {
 
 
     public DescriptorImpl getDescriptor() {
-        return DescriptorImpl.INSTANCE;
+        return new ProjectGnatcheckType.DescriptorImpl();
     }
 
     @DataBoundConstructor
@@ -50,8 +50,9 @@ public class ProjectGnatcheckType extends GnatcheckType {
     }
 
 
-    public static final class DescriptorImpl extends GnatcheckTypeDescriptor {
-        private DescriptorImpl() {
+    @Extension
+    public static class DescriptorImpl extends GnatcheckTypeDescriptor {
+        public DescriptorImpl() {
             super(ProjectGnatcheckType.class);
         }
 
@@ -66,10 +67,6 @@ public class ProjectGnatcheckType extends GnatcheckType {
         public String getDisplayName() {
             return "project-wide gnat check";
         }
-
-        public static final DescriptorImpl INSTANCE = new DescriptorImpl();
     }
-
-    private static final long serialVersionUID = 1L;
 
 }

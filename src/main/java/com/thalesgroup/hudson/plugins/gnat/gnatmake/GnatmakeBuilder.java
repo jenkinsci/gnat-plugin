@@ -61,10 +61,6 @@ public class GnatmakeBuilder extends Builder {
 
     private final String modeSwitches;
 
-    public String getSwitches() {
-        return switches;
-    }
-
     @DataBoundConstructor
     public GnatmakeBuilder(String gnatName, String switches, String fileNames,
                            String modeSwitches) {
@@ -75,14 +71,22 @@ public class GnatmakeBuilder extends Builder {
     }
 
 
+    @SuppressWarnings("unused")
+    public String getSwitches() {
+        return switches;
+    }
+
+    @SuppressWarnings("unused")
     public String getFileNames() {
         return fileNames;
     }
 
+    @SuppressWarnings("unused")
     public String getModeSwitches() {
         return modeSwitches;
     }
 
+    @SuppressWarnings("unused")
     public String getGnatName() {
         return gnatName;
     }
@@ -92,7 +96,7 @@ public class GnatmakeBuilder extends Builder {
                            BuildListener listener) throws InterruptedException {
         ArgumentListBuilder args = new ArgumentListBuilder();
 
-        String execPathGnatmake = null;
+        String execPathGnatmake;
         try {
             execPathGnatmake = GnatUtil.getExecutable(DESCRIPTOR.getInstallations(), gnatName, launcher, listener, GnatInstallation.GNAT_TYPE.GNATMAKE);
             args.add(execPathGnatmake);
@@ -151,6 +155,7 @@ public class GnatmakeBuilder extends Builder {
     public static final GnatmakeBuilderDescriptor DESCRIPTOR = new GnatmakeBuilderDescriptor();
 
 
+    @SuppressWarnings("unused")
     public static final class GnatmakeBuilderDescriptor extends Descriptor<Builder> {
 
         @CopyOnWrite
@@ -184,6 +189,8 @@ public class GnatmakeBuilder extends Builder {
 
         /**
          * Checks if the specified Hudson GNATMAKE_HOME is valid.
+         *
+         * @param value the current gnatmake home
          */
         public FormValidation doCheckGnatmakeHome(@QueryParameter String value) {
             File f = new File(Util.fixNull(value));
