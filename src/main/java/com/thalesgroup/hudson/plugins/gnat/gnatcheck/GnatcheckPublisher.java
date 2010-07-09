@@ -76,7 +76,7 @@ public class GnatcheckPublisher extends Recorder implements Serializable {
         @Override
         public Publisher newInstance(StaplerRequest req, JSONObject formData) throws FormException {
             List<GnatcheckType> buildTypes = Descriptor.newInstancesFromHeteroList(
-                    req, formData, "types", GnatcheckTypeDescriptor.LIST);
+                    req, formData, "types", getBuildTypes());
             return new GnatcheckPublisher(buildTypes.toArray(new GnatcheckType[buildTypes.size()]));
         }
 
@@ -94,7 +94,7 @@ public class GnatcheckPublisher extends Recorder implements Serializable {
         }
 
         public List<GnatcheckTypeDescriptor> getBuildTypes() {
-            return GnatcheckTypeDescriptor.LIST;
+            return Hudson.getInstance().getDescriptorList(GnatcheckType.class);
         }
 
     }

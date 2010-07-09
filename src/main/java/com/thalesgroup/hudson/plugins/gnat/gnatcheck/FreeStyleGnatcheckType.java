@@ -58,7 +58,7 @@ public class FreeStyleGnatcheckType extends GnatcheckType {
 
 
     @Extension
-    public static  class DescriptorImpl extends GnatcheckTypeDescriptor {
+    public static class DescriptorImpl extends GnatcheckTypeDescriptor {
         public DescriptorImpl() {
             super(FreeStyleGnatcheckType.class);
         }
