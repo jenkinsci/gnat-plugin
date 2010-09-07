@@ -24,9 +24,9 @@
 package com.thalesgroup.hudson.plugins.gnat.aunit;
 
 
-import com.thalesgroup.dtkit.metrics.api.InputMetric;
-import com.thalesgroup.dtkit.metrics.api.InputMetricFactory;
-import com.thalesgroup.dtkit.metrics.api.InputMetricXSL;
+import com.thalesgroup.dtkit.metrics.model.InputMetric;
+import com.thalesgroup.dtkit.metrics.model.InputMetricFactory;
+import com.thalesgroup.dtkit.metrics.model.InputMetricXSL;
 import org.custommonkey.xmlunit.Diff;
 import org.custommonkey.xmlunit.XMLUnit;
 import org.junit.Assert;
