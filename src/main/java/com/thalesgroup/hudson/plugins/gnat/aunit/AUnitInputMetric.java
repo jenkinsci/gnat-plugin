@@ -52,8 +52,8 @@ public class AUnitInputMetric extends InputMetricXSL {
     }
 
     @Override
-    public String getInputXsd() {
-        return "aunit-1.0.xsd";
+    public String[] getInputXsdNameList() {
+        return new String[]{"aunit-1.0.xsd"};
     }
 
     public OutputMetric getOutputFormatType() {
