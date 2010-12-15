@@ -52,7 +52,7 @@ public class FreeStyleGnatmetricType extends GnatmetricType {
         this.gcc_switches = gcc_switches;
     }
 
-    @Extension
+    @Extension(ordinal=9)
     public static class DescriptorImpl extends GnatmetricTypeDescriptor {
         public DescriptorImpl() {
             super(FreeStyleGnatmetricType.class);

@@ -49,8 +49,7 @@ public class ProjectGnatmetricType extends GnatmetricType {
         this.options = options;
     }
 
-
-    @Extension
+    @Extension(ordinal=9)
     public static class DescriptorImpl extends GnatmetricTypeDescriptor {
         public DescriptorImpl() {
             super(ProjectGnatmetricType.class);

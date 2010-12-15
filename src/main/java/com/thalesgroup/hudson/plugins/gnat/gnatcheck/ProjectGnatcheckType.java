@@ -23,10 +23,10 @@
 
 package com.thalesgroup.hudson.plugins.gnat.gnatcheck;
 
+import hudson.Extension;
 import net.sf.json.JSONObject;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.StaplerRequest;
-import hudson.Extension;
 
 public class ProjectGnatcheckType extends GnatcheckType {
 
@@ -50,7 +50,7 @@ public class ProjectGnatcheckType extends GnatcheckType {
     }
 
 
-    @Extension
+    @Extension(ordinal = 10)
     public static class DescriptorImpl extends GnatcheckTypeDescriptor {
         public DescriptorImpl() {
             super(ProjectGnatcheckType.class);

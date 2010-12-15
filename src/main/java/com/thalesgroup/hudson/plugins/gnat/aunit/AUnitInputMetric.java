@@ -60,5 +60,4 @@ public class AUnitInputMetric extends InputMetricXSL {
         return JUnitModel.OUTPUT_JUNIT_1_0;
     }
 
-
 }

@@ -56,7 +56,7 @@ public class GnatcheckPublisher extends Recorder implements Serializable {
         this.types = types;
     }
 
-    @Extension
+    @Extension(ordinal = 10)
     @SuppressWarnings("unused")
     public static final class GnatcheckPublisherDescriptor extends
             BuildStepDescriptor<Publisher> {
@@ -99,10 +99,10 @@ public class GnatcheckPublisher extends Recorder implements Serializable {
 
     }
 
-    @Override
-    public boolean needsToRunAfterFinalized() {
-        return true;
-    }
+//    @Override
+//    public boolean needsToRunAfterFinalized() {
+//        return true;
+//    }
 
     @Override
     public boolean prebuild(AbstractBuild<?, ?> build, BuildListener listener) {
@@ -170,12 +170,12 @@ public class GnatcheckPublisher extends Recorder implements Serializable {
                     int r = launcher.launch().cmds(args)
                             .envs(build.getEnvironment(listener)).stdout(listener)
                             .pwd(build.getModuleRoot()).join();
-                    //On Windows, gnatchek returns an exit code different of zero, even if there are no errors.
-                    //Performing check only for Unix (Ignoring Windows return code).
-                    if (r != 0 && launcher.isUnix()) {
-                        build.setResult(Result.FAILURE);
-                        return false;
-                    }
+//                   //On Windows, gnatchek returns an exit code different of zero, even if there are no errors.
+                     //Performing check only for Unix (Ignoring Windows return code).
+//                    if (r != 0 && launcher.isUnix()) {
+//                        build.setResult(Result.FAILURE);
+//                        return false;
+//                    }
                 } catch (IOException e) {
                     Util.displayIOException(e, listener);
                     e.printStackTrace(listener.fatalError("error"));
@@ -185,6 +185,7 @@ public class GnatcheckPublisher extends Recorder implements Serializable {
             }
         }
 
+        build.setResult(Result.SUCCESS);
         return true;
     }
 

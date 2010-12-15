@@ -62,7 +62,7 @@ public class GnathtmlArchiver extends Recorder implements Serializable {
 
     private static final String GNATHTML_GENERATED_DIRECTORY_OTION = "-o";
 
-    @Extension
+    @Extension(ordinal=8)
     public final static GnathtmlArchiverDescriptor DESCRIPTOR = new GnathtmlArchiverDescriptor();
 
     private final String gnatName;
@@ -145,10 +145,10 @@ public class GnathtmlArchiver extends Recorder implements Serializable {
     }
 
 
-    @Override
-    public boolean needsToRunAfterFinalized() {
-        return true;
-    }
+//    @Override
+//    public boolean needsToRunAfterFinalized() {
+//        return true;
+//    }
 
     @Override
     public boolean prebuild(AbstractBuild<?, ?> build, BuildListener listener) {
@@ -225,10 +225,10 @@ public class GnathtmlArchiver extends Recorder implements Serializable {
 
         try {
             int r = launcher.launch().cmds(args).envs(build.getEnvironment(listener)).stdout(listener).pwd(build.getModuleRoot()).join();
-            if (r != 0) {
-                build.setResult(Result.FAILURE);
-                return false;
-            }
+//            if (r != 0) {
+//                build.setResult(Result.FAILURE);
+//                return false;
+//            }
         } catch (IOException e) {
             Util.displayIOException(e, listener);
             e.printStackTrace(listener.fatalError("error"));
@@ -267,7 +267,7 @@ public class GnathtmlArchiver extends Recorder implements Serializable {
         if (keepAll)
             build.addAction(new GnathtmlBuildAction(build));
 
-
+        build.setResult(Result.SUCCESS);
         return true;
     }
 

@@ -54,7 +54,7 @@ public class GnatmetricPublisher extends Recorder implements Serializable {
         this.types = types;
     }
 
-    @Extension
+    @Extension(ordinal = 9)
     @SuppressWarnings("unused")
     public static final class GnatmetricPublisherDescriptor extends BuildStepDescriptor<Publisher> {
 
@@ -93,10 +93,10 @@ public class GnatmetricPublisher extends Recorder implements Serializable {
 
     }
 
-    @Override
-    public boolean needsToRunAfterFinalized() {
-        return true;
-    }
+//    @Override
+//    public boolean needsToRunAfterFinalized() {
+//        return true;
+//    }
 
     @Override
     public boolean prebuild(AbstractBuild<?, ?> build, BuildListener listener) {
@@ -173,10 +173,10 @@ public class GnatmetricPublisher extends Recorder implements Serializable {
 
                 try {
                     int r = launcher.launch().cmds(args).envs(build.getEnvironment(listener)).stdout(listener).pwd(build.getModuleRoot()).join();
-                    if (r != 0) {
-                        build.setResult(Result.FAILURE);
-                        return false;
-                    }
+//                    if (r != 0) {
+//                        build.setResult(Result.FAILURE);
+//                        return false;
+//                    }
                 } catch (IOException e) {
                     Util.displayIOException(e, listener);
                     e.printStackTrace(listener.fatalError("error"));
@@ -186,7 +186,7 @@ public class GnatmetricPublisher extends Recorder implements Serializable {
             }
         }
 
-
+        build.setResult(Result.SUCCESS);
         return true;
     }
 
