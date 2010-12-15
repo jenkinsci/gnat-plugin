@@ -95,7 +95,7 @@
     <scm>
         <connection>scm:svn:https://gbois@svn.java.net/svn/hudson~svn/trunk/huds
 on/plugins/gnat</connection>
-        <developerConnection>scm:svn:https://svn.java.net/svn/hudson~svn/trunk/h
-udson/plugins/gnat</developerConnection>
-  </scm>
+        <developerConnection>scm:svn:https://svn.java.net/svn/hudson~svn/trunk/hudson/plugins/gnat</developerConnection>
+   </scm>
+
 </project>
