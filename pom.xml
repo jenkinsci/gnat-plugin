@@ -33,7 +33,7 @@
 
     <groupId>com.thalesgroup.jenkins-ci.plugins</groupId>
     <artifactId>gnat</artifactId>
-    <version>0.11</version>
+    <version>0.12-SNAPSHOT</version>
     <packaging>hpi</packaging>
     <name>Hudson GNAT plugin</name>
     <url>http://wiki.hudson-ci.org/display/HUDSON/Gnat+Plugin</url>
