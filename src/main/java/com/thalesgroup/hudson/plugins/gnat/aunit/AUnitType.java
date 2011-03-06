@@ -45,7 +45,7 @@ public class AUnitType extends XUnitType {
      */
     @SuppressWarnings("unused")
     public Object readResolve() {
-        return new AUnitPluginType(this.getPattern(), this.isFaildedIfNotNew(), this.isDeleteJUnitFiles());
+        return new AUnitPluginType(this.getPattern(), this.isFaildedIfNotNew(), this.isDeleteJUnitFiles(), this.isStopProcessingIfError());
     }
 
 }
