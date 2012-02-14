@@ -24,6 +24,7 @@
 package com.thalesgroup.hudson.plugins.gnat.aunit;
 
 import com.thalesgroup.dtkit.metrics.hudson.api.descriptor.TestTypeDescriptor;
+import com.thalesgroup.dtkit.metrics.hudson.model.AUnitJunitHudsonTestType;
 import com.thalesgroup.hudson.plugins.xunit.types.XUnitType;
 
 
@@ -38,14 +39,9 @@ public class AUnitType extends XUnitType {
         return null;
     }
 
-    /**
-     * Call at Hudson startup for backward compatibility
-     *
-     * @return an new hudson object
-     */
     @SuppressWarnings("unused")
     public Object readResolve() {
-        return new AUnitPluginType(this.getPattern(), this.isFaildedIfNotNew(), this.isDeleteJUnitFiles(), this.isStopProcessingIfError());
+        return new AUnitJunitHudsonTestType(this.getPattern(), this.isFaildedIfNotNew(), this.isDeleteOutputFiles(), this.isStopProcessingIfError());
     }
 
 }
