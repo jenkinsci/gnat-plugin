@@ -93,6 +93,7 @@ public final class GnatInstallation {
 
     /**
      * Returns true if the executable exists
+     *
      * @return true if the executable exists, false otherwise
      */
     public boolean getExists() {

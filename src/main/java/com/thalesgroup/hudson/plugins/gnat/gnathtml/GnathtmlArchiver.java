@@ -34,10 +34,10 @@ import hudson.Launcher;
 import hudson.Util;
 import hudson.matrix.MatrixProject;
 import hudson.model.*;
+import hudson.tasks.BuildStepDescriptor;
 import hudson.tasks.BuildStepMonitor;
 import hudson.tasks.Publisher;
 import hudson.tasks.Recorder;
-import hudson.tasks.BuildStepDescriptor;
 import hudson.util.ArgumentListBuilder;
 import net.sf.json.JSONObject;
 import org.kohsuke.stapler.DataBoundConstructor;
@@ -62,7 +62,7 @@ public class GnathtmlArchiver extends Recorder implements Serializable {
 
     private static final String GNATHTML_GENERATED_DIRECTORY_OTION = "-o";
 
-    @Extension(ordinal=8)
+    @Extension(ordinal = 8)
     public final static GnathtmlArchiverDescriptor DESCRIPTOR = new GnathtmlArchiverDescriptor();
 
     private final String gnatName;
@@ -198,8 +198,7 @@ public class GnathtmlArchiver extends Recorder implements Serializable {
         String execPathGnathtml = null;
         try {
             execPathGnathtml = GnatUtil.getExecutable(DESCRIPTOR.getInstallations(), gnatName, launcher, listener, GnatInstallation.GNAT_TYPE.GNATHTML);
-        }
-        catch (GnatException ge) {
+        } catch (GnatException ge) {
             ge.printStackTrace(listener.fatalError("error"));
             build.setResult(Result.FAILURE);
             return false;

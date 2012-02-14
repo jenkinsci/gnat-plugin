@@ -77,7 +77,8 @@ public class GnatUtil {
 
     /**
      * Gets the Gnat to invoke, or null to invoke the default one.
-     * @param  installations the arrays of Installation object
+     *
+     * @param installations         the arrays of Installation object
      * @param selectGnatLogicalName the current gnat name
      * @return the current GnatInstallation object
      */

@@ -122,8 +122,7 @@ public class GnatmetricPublisher extends Recorder implements Serializable {
                     String execPathGnat;
                     try {
                         execPathGnat = GnatUtil.getExecutable(projectGnatMetricType.getDescriptor().getInstallations(), type.gnatName, launcher, listener, GnatInstallation.GNAT_TYPE.GNAT);
-                    }
-                    catch (GnatException ge) {
+                    } catch (GnatException ge) {
                         ge.printStackTrace(listener.fatalError("error"));
                         build.setResult(Result.FAILURE);
                         return false;
@@ -145,8 +144,7 @@ public class GnatmetricPublisher extends Recorder implements Serializable {
                     String execPathGnatmetric;
                     try {
                         execPathGnatmetric = GnatUtil.getExecutable(freeStyleGnatMetricType.getDescriptor().getInstallations(), type.gnatName, launcher, listener, GnatInstallation.GNAT_TYPE.GNATMETRIC);
-                    }
-                    catch (GnatException ge) {
+                    } catch (GnatException ge) {
                         ge.printStackTrace(listener.fatalError("error"));
                         build.setResult(Result.FAILURE);
                         return false;

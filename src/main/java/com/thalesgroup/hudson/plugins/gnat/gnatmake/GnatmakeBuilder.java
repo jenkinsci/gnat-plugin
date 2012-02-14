@@ -100,8 +100,7 @@ public class GnatmakeBuilder extends Builder {
         try {
             execPathGnatmake = GnatUtil.getExecutable(DESCRIPTOR.getInstallations(), gnatName, launcher, listener, GnatInstallation.GNAT_TYPE.GNATMAKE);
             args.add(execPathGnatmake);
-        }
-        catch (GnatException ge) {
+        } catch (GnatException ge) {
             ge.printStackTrace(listener.fatalError("error"));
             build.setResult(Result.FAILURE);
             return false;

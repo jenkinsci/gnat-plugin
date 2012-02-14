@@ -128,8 +128,7 @@ public class GnatcheckPublisher extends Recorder implements Serializable {
                     String execPathGnat;
                     try {
                         execPathGnat = GnatUtil.getExecutable(projectGnatcheckType.getDescriptor().getInstallations(), type.gnatName, launcher, listener, GnatInstallation.GNAT_TYPE.GNAT);
-                    }
-                    catch (GnatException ge) {
+                    } catch (GnatException ge) {
                         ge.printStackTrace(listener.fatalError("error"));
                         build.setResult(Result.FAILURE);
                         return false;
@@ -151,8 +150,7 @@ public class GnatcheckPublisher extends Recorder implements Serializable {
                     String execPathGnatcheck;
                     try {
                         execPathGnatcheck = GnatUtil.getExecutable(freeStyleGnatcheckType.getDescriptor().getInstallations(), type.gnatName, launcher, listener, GnatInstallation.GNAT_TYPE.GNATCHECK);
-                    }
-                    catch (GnatException ge) {
+                    } catch (GnatException ge) {
                         ge.printStackTrace(listener.fatalError("error"));
                         build.setResult(Result.FAILURE);
                         return false;
@@ -171,7 +169,7 @@ public class GnatcheckPublisher extends Recorder implements Serializable {
                             .envs(build.getEnvironment(listener)).stdout(listener)
                             .pwd(build.getModuleRoot()).join();
 //                   //On Windows, gnatchek returns an exit code different of zero, even if there are no errors.
-                     //Performing check only for Unix (Ignoring Windows return code).
+                    //Performing check only for Unix (Ignoring Windows return code).
 //                    if (r != 0 && launcher.isUnix()) {
 //                        build.setResult(Result.FAILURE);
 //                        return false;

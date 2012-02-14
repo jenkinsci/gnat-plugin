@@ -23,10 +23,10 @@
 
 package com.thalesgroup.hudson.plugins.gnat.gnatmetric;
 
+import hudson.Extension;
 import net.sf.json.JSONObject;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.StaplerRequest;
-import hudson.Extension;
 
 public class ProjectGnatmetricType extends GnatmetricType {
 
@@ -49,7 +49,7 @@ public class ProjectGnatmetricType extends GnatmetricType {
         this.options = options;
     }
 
-    @Extension(ordinal=9)
+    @Extension(ordinal = 9)
     public static class DescriptorImpl extends GnatmetricTypeDescriptor {
         public DescriptorImpl() {
             super(ProjectGnatmetricType.class);
