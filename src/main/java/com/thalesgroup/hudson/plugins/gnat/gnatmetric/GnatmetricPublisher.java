@@ -87,7 +87,7 @@ public class GnatmetricPublisher extends Recorder implements Serializable {
         }
 
         public boolean isApplicable(Class<? extends AbstractProject> jobType) {
-            return FreeStyleProject.class.isAssignableFrom(jobType) || MatrixProject.class.isAssignableFrom(jobType);
+            return false;
         }
 
 
@@ -98,13 +98,13 @@ public class GnatmetricPublisher extends Recorder implements Serializable {
 //        return true;
 //    }
 
-    @Override
+   /* @Override
     public boolean prebuild(AbstractBuild<?, ?> build, BuildListener listener) {
         return true;
-    }
+    }*/
 
 
-    @SuppressWarnings("unchecked")
+    /*@SuppressWarnings("unchecked")
     @Override
     public boolean perform(AbstractBuild<?, ?> build, Launcher launcher,
                            BuildListener listener) throws InterruptedException, IOException {
@@ -186,7 +186,7 @@ public class GnatmetricPublisher extends Recorder implements Serializable {
 
         build.setResult(Result.SUCCESS);
         return true;
-    }
+    }*/
 
     public BuildStepMonitor getRequiredMonitorService() {
         return BuildStepMonitor.BUILD;
