@@ -8,7 +8,7 @@
     </parent>
 
     <artifactId>gnat</artifactId>
-    <version>0.14</version>
+    <version>0.15-SNAPSHOT</version>
     <packaging>hpi</packaging>
     <name>Jenkins GNAT plugin</name>
     <url>http://wiki.jenkins-ci.org/display/JENKINS/Gnat+Plugin</url>
