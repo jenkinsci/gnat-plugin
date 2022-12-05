@@ -34,7 +34,7 @@
         <maven.compiler.source>1.6</maven.compiler.source>
         <maven.compiler.target>1.6</maven.compiler.target>
         <saxon.version>9.1.0.8</saxon.version>
-        <xunit.version>1.39</xunit.version>
+        <xunit.version>3.1.0</xunit.version>
         <xmlunit.version>1.3</xmlunit.version>
         <junit.version>4.8.2</junit.version>
     </properties>
